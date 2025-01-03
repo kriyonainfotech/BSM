@@ -1,31 +1,35 @@
-const express = require('express')
-const router = express.Router()
-const multer = require('multer')
-const crypto = require('crypto')
-const path = require('path')
-const { AddProduct, getAllProducts,getProductById, updateProduct, deleteProduct, getProductByUser } = require('../controllers/productController')
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const express = require("express");
+const router = express.Router();
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary"); // Import CloudinaryStorage from multer-storage-cloudinary
+const cloudinary = require("../config/cloudinaryConfig");
+const {
+  AddProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  getProductByUser,
+} = require("../controllers/productController");
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
+// Set up Cloudinary storage for multer
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary: cloudinary, // Cloudinary instance
   params: {
-    folder: 'products', // Folder in Cloudinary where images will be stored
-    allowed_formats: ['jpg', 'png', 'jpeg'],
+    folder: "products", // Folder in Cloudinary where images will be stored
+    allowed_formats: ["jpg", "png", "jpeg"], // Allowed image formats
   },
 });
 
-const upload = multer({ storage: storage })
-router.post('/AddProduct',upload.single('image'),AddProduct)
-router.get('/getAllProducts',getAllProducts)
-router.post('/getProductById',getProductById)
-router.post('/updateProduct',upload.single('image'),updateProduct)
-router.delete('/deleteProduct',deleteProduct)
-router.post('/getProductByUser',getProductByUser)
-module.exports = router
+// Set up multer with Cloudinary storage
+const upload = multer({ storage: storage });
+
+// Routes
+router.post("/AddProduct", upload.single("image"), AddProduct);
+router.get("/getAllProducts", getAllProducts);
+router.post("/getProductById", getProductById);
+router.post("/updateProduct", upload.single("image"), updateProduct);
+router.delete("/deleteProduct", deleteProduct);
+router.post("/getProductByUser", getProductByUser);
+
+module.exports = router;
